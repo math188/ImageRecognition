@@ -1,0 +1,129 @@
+<%- include('../parts/html_head') %>
+<%- include('../parts/navbar') %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">請上傳問題</h5>
+                    <div id="alert" class="alert alert-success" role="alert" style="display: none;"></div>
+                    <form name="form1" onsubmit="return checkForm()">
+                        <div class="form-group">
+                            <label for="name">name</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">email</label>
+                            <input type="text" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">mobile</label>
+                            <input type="text" class="form-control" id="mobile" name="mobile">
+                        </div>
+                        <div class="form-group">
+                            <input type="file" id="image" name="image"><br><br>
+                            <img style="width: 100%;" id="myImg" name="myImg" src="" alt="">
+                        </div>
+                        <div class="form-group" style="display: none;">
+                            <label for="img_src">img_src</label>
+                            <input type="text" class="form-control" id="img_src" name="img_src">
+                        </div>
+                        <div class="form-group">
+                            <label for="remark">備註</label>
+                            <textarea class="form-control" id="remark" name="remark" cols="50" rows="3"></textarea>
+                        </div>
+                        <div class="form-group" style="display: none;">
+                            <input type="text" class="form-control" id="conclution" name="conclution">
+                        </div>
+                        <div id="outputDiv"></div>
+                        <button type="submit" class="btn btn-primary" id="submit_bt">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include('../parts/script') %>
+
+<script>
+    const image = document.getElementById('image');
+    const img_src = document.getElementById('img_src');
+    const conclution = document.getElementById('conclution');
+
+    // 在前端快顯圖片檔
+    function readURL(image) {
+        if (image.files && image.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                $('#myImg').attr('src', evt.target.result);
+            }
+            reader.readAsDataURL(image.files[0]);
+        }
+    }
+    $("#image").change(function () {
+        readURL(this);
+    });
+
+
+
+    function checkForm() {
+        const barAlert = $('#alert');
+        barAlert.hide();
+        // 後端存取圖片並回傳存放路徑，再回傳資料分析
+        const fd = new FormData(document.form1);
+        fetch('/try-upload', {
+            method: 'POST',
+            body: fd
+        }).then(r => {
+            // console.log(r);
+            return r.json();
+        }).then(obj => {
+            // console.log(obj.img);
+            img_src.value = obj.img;
+            imgConclution();
+        })
+
+        // 回傳資料分析，後端再存取所有資料
+        function imgConclution() {
+            var formData = new FormData(document.form1);
+            $.ajax({
+                type: 'POST',
+                url: 'http://137.116.46.200/predict',
+                data: formData,
+                contentType: false,
+                processData: false
+            }).done((result) => {
+                var str = '<b>分析結果：</b>';
+                $.each(result['predictions'], function (index, predict) {
+                    str += `<p>${index}. ${predict.label}：${predict.probability}<p>`;
+                });
+                $('#outputDiv').html(str);
+                conclution.value = str;
+                insertData();
+            }).fail((err) => {
+                alert(err.statusText);
+            });
+        };
+
+        // 後端存取所有資料
+        function insertData() {
+            $.post('/question/add', $(document.form1).serialize(), (output) => {
+                if (output.success) {
+                    barAlert.removeClass('alert-danger').addClass('alert-success').text(output.info)
+                } else {
+                    barAlert.removeClass('alert-success').addClass('alert-danger').text(output.info)
+                }
+                barAlert.slideDown();
+            }, 'json');
+        }
+        return false;
+    };
+
+
+
+</script>
+
+<%- include('../parts/html_foot') %>

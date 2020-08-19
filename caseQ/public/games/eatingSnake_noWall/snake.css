@@ -1,0 +1,62 @@
+body {
+    background-color: #000000;
+    color: #ffffff;
+    margin: 0; 
+    padding: 0;
+}
+body>div {
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+#control {
+    margin: 0;
+    padding: 0;
+    color: yellow;
+}
+#score {
+    color: #ffffff;
+    width: 200px;
+    height: 50px;
+    text-align: left;
+    font-size: 30px;
+    float: left;
+    position: absolute;
+    top: 250px;
+    left: 50px;
+}
+body button {
+    position: absolute;
+    top: 400px;
+    left: 100px;
+}
+.wrapper {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+.wrapper #maps {
+    margin: 0 auto;
+    background-color: #ffffff;
+    /* border: 10px solid purple; */
+    /* border-radius: 5px; */
+
+}
+#start {
+    background-color: blue;
+    color: #ffffff;
+    width: 100px;
+    height: 50px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px #9ddef1;
+    transition: .15s ease-in-out;
+    position: relative;
+    top: 50px;
+    left: 50px;
+}
+#start:hover {
+    padding-left: 10px;
+    padding-top: 5px;
+    box-shadow: 2px 2px 5px #252525 inset;
+    cursor: pointer;
+}

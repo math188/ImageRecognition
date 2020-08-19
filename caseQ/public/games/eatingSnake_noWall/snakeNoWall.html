@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="snake.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <title>EatingSnakeNoWall</title>
+</head>
+
+<body>
+    <div>
+        <b>～請用方向鍵(上下左右)控制蛇蛇～</b><br>
+        <p id="control">
+            "Enter鍵" 表示開始或暫停 <br>
+            "空白鍵" 按著可以加速！
+        </p>
+    </div>
+
+
+    <button id="start" onclick="start()">開始</button>
+    <div id="score">得分：<span id="number"> 0 </span>分</div>
+    <div class="wrapper">
+        <canvas id="maps" width="600" height="400"></canvas>
+    </div>
+
+
+
+    <script src="snake.js"></script>
+
+    <script>
+        $(function () {
+
+            // 按按鍵轉彎(jQuery)
+            $(document).keydown(function (evt) {
+                if (evt.keyCode == 37 || evt.keyCode == 38 || evt.keyCode == 39 || evt.keyCode == 40) {
+                    key = evt.keyCode;
+                }
+            })
+
+            // 鍵盤開始與暫停
+            $(document).keyup(function (evt) {
+                if (evt.keyCode == 13) {
+                    start();
+                }
+            })
+
+            // 空白鍵加速
+            $(document).on({
+                keydown: function (evt) {
+                    if (evt.keyCode == 32 && snake.length < 25) {
+                        clearInterval(interval);
+                        interval = window.setInterval(move, 30);
+                    }
+                },
+                keyup: function (evt) {
+                    snakeL = Math.floor(snake.length / 5) * 5;
+                    if (evt.keyCode == 32) {
+                        clearInterval(interval);
+                        interval = 0;
+                        choose();
+                    }
+                }
+            })
+
+
+        })
+
+    </script>
+
+
+
+
+</body>
+
+</html>

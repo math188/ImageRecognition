@@ -1,0 +1,56 @@
+<%- include('../parts/html_head') %>
+<%- include('../parts/navbar') %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><b>編號<%= row.sid %> 圖片為</b></h5>
+                    <div class="form-group">
+                        <img style="width: 100%;" id="myImg" name="myImg" src="">
+                    </div>
+                    <fieldset>
+                        <div id="outputDiv" class="form-group">
+                            <b>分析結果：</b>
+                        </div>
+                        <button id="btn" class="btn btn-primary" onclick="scrollingTop()" style="display: none;">Top</button>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    button {
+        width: 150px;
+        float: right;
+    }
+</style>
+<%- include('../parts/script') %>
+<script>
+    const row = '<%- JSON.stringify(row) %>';
+    $('#myImg').attr('src', JSON.parse(row).img_src);
+    $('#outputDiv').html(JSON.parse(row).conclution);
+
+    // 滾輪
+    window.onscroll = function () { scrollFunction() };
+    // 按鈕是否出現
+    var mybutton = document.getElementById("btn");
+    function scrollFunction() {
+        if (document.body.scrollTop > 10 || document.documentElement.scrollTop > 10) {
+            mybutton.style.display = "block";
+        } else {
+            mybutton.style.display = "none";
+        }
+    }
+    // 回到最頂部
+    function scrollingTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    };
+
+</script>
+
+<%- include('../parts/html_foot') %>

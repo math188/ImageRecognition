@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./mask.css">
+    <title>Mask</title>
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <img id="map" src="./images/map.jpg">
+        <div id="maskDiv"></div>
+        <img id="bowl" src="./images/taiwan.png">
+
+        <img id="bear" src="./images/bear.png">
+        <div id="virusDiv"></div>
+
+    </div>
+
+    <img id="clock" src="./images/clockChen.png">
+
+    <div id="title"><b>按 Enter 開始或暫停</b></div>
+    <button id="start">開始</button>
+    <div id="score">得分：<span id="scoring"></span>分</div>
+    <div id="timer">倒數：<span id="timing">30</span>秒</div>
+
+
+
+    <script>
+        $(function () {
+            var clockX = 0;
+            var maskNum = 0;
+            var bowlLeft = 0;
+            var maskX = 0;
+            var bearX = 0;
+            var virusX = 0;
+            var total = 0;
+            var time = 30;
+            var flag = false;
+            var pause = true;
+
+
+
+            // ==============主控程式碼==============
+
+            //  開始與暫停
+            $('#start').click(function () {
+                var text = $(this).text();
+                if (text == '暫停') {
+                    alert('暫停中。。。');
+                }
+                if (pause) {
+                    pause = false;
+                    clockInterval = window.setInterval(clockMask, 700);   // 開始發口罩
+                    virusInterval = window.setInterval(bearDown, 2500);   // 下落病毒
+                    document.onmousemove = bowlMove;                          // 滑鼠感應
+                    timeInterval = window.setInterval(timer, 1000);           // 計時開始
+                    $(this).text('暫停');
+                }
+            })
+
+            // 鍵盤開始與暫停
+            $(document).keyup(function (evt) {
+                if (evt.keyCode == 13) {
+                    var text = $('#start').text();
+                    if (text == '暫停') {
+                        alert('暫停中。。。');
+                    }
+                    if (pause) {
+                        pause = false;
+                        clockInterval = window.setInterval(clockMask, 700);   // 開始發口罩
+                        virusInterval = window.setInterval(bearDown, 2500);   // 下落病毒
+                        document.onmousemove = bowlMove;                          // 滑鼠感應
+                        timeInterval = window.setInterval(timer, 1000);           // 計時開始
+                        $('#start').text('暫停');
+                    }
+                }
+            })
+
+            // 滑鼠控制
+            function bowlMove() {
+                var bowl = document.getElementById('bowl');
+                bowlLeft = window.event.clientX - 200;   // number
+                $('#bowl').css('left', bowlLeft + 'px');
+            }
+
+            // 計時裝置
+            function timer() {
+                time -= 1;
+                $('#timing').text(time);
+                if ($('#timing').text() == -1) {
+                    clearInterval(timeInterval);
+                    alert(`您的得分為${total}分！，獲得了${total / 10}個口罩`);
+                    if (flag) {
+                        alert(`你遭感染了！現在起必須居家隔離14天～`);
+                    }
+                    alert('按確認重新開始');
+                    window.location.reload();
+                }
+            }
+
+            // 移動時中
+            function clockMask() {
+                clockX = Math.floor(Math.random() * 12) * 60 + 110;
+                $('#clock').css('left', clockX + 'px');
+                setTimeout(maskDrop, 500);
+            }
+
+            // 口罩掉落
+            function maskDrop() {
+                maskX = clockX - 90;
+                $('#maskDiv').append('<img class="mask" src="./images/mask.png">');
+                $('.mask').eq(maskNum).css({
+                    left: maskX + 'px',
+                    top: '+=550px',
+                });
+                maskNum++;
+                setTimeout(maskCatch, 550);
+            }
+
+            // 接到口罩
+            function maskCatch() {
+                if (bowlLeft >= (maskX - 70) && bowlLeft <= (maskX - 20)) {
+                    $('.mask').eq(maskNum - 1).css({
+                        transform: 'translate(0px,-400px)',
+                        opacity: '0'
+                    });
+                    total += 10;
+                    $('#scoring').text(total);
+                    // console.log('catch');
+                    // console.log('=====')
+                }
+            }
+
+            // 維尼下降丟 virus
+            function bearDown() {
+                bearX = bowlLeft - 100;
+                virusX = bearX;
+                $('#bear').css('left', bearX + 'px');
+                $('#bear').css({
+                    left: virusX + 'px',
+                    transition: '1s',
+                    top: '-50px'
+                });
+                setTimeout(throwVirus, 700)
+                setTimeout(bearUp, 1000)
+                // 維尼上升
+                function bearUp() {
+                    $('#bear').css('top', '-200px');
+                    $('#bear').css('transition', '0')
+                }
+            }
+
+            // 產生 virus 並落下
+            function throwVirus() {
+                $('#virusDiv').append('<img class="virus" src="./images/virus2.png">')
+                $('.virus').css('left', virusX + 100 + 'px');
+                $('.virus').css({ top: '+=550px' });
+                setTimeout(touchVirus, 730);
+                setTimeout(touchVirus, 1200);
+            }
+
+            // 碰到病毒
+            function touchVirus() {
+                if (bowlLeft >= (virusX - 50) && bowlLeft <= (virusX + 150)) {
+                    total -= 50;
+                    $('#scoring').text(total);
+                    $('#wrapper').css('background-color', 'red');
+                    flag = true;
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        })
+
+
+    </script>
+
+</body>
+
+</html>

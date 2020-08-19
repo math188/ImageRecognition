@@ -1,0 +1,61 @@
+<%- include('../parts/html_head') %>
+<%- include('../parts/navbar') %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">請註冊會員資料</h5>
+                    <div id="alert" class="alert alert-success" role="alert" style="display: none;"></div>
+                    <form name="form1" onsubmit="return checkForm()">
+                        <div class="form-group">
+                            <label for="name">name</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">account（e-mail）</label>
+                            <input type="text" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">password</label>
+                            <input type="text" class="form-control" id="password" name="password">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">mobile</label>
+                            <input type="text" class="form-control" id="mobile" name="mobile">
+                        </div>
+                        <div id="outputDiv"></div>
+                        <button type="submit" class="btn btn-primary" id="submit_bt">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include('../parts/script') %>
+
+<script>
+
+    function checkForm() {
+        const barAlert = $('#alert');
+        barAlert.hide();
+        // 後端存取會員資料
+        $.post('/question/add_member', $(document.form1).serialize(), (output) => {
+            if (output.success) {
+                barAlert.removeClass('alert-danger').addClass('alert-success').text(output.info)
+            } else {
+                barAlert.removeClass('alert-success').addClass('alert-danger').text(output.info)
+            }
+            barAlert.slideDown();
+        }, 'json');
+        return false;
+    };
+
+
+
+</script>
+
+<%- include('../parts/html_foot') %>

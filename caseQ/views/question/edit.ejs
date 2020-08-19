@@ -1,0 +1,69 @@
+<%- include('../parts/html_head') %>
+<%- include('../parts/navbar') %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">編輯提問者資料</h5>
+          <form name="form1" onsubmit="return checkForm()">
+            <div id="alert" class="alert alert-success" role="alert" style="display: none;"></div>
+            <div class="form-group">
+              <label for="name">name</label>
+              <input type="text" class="form-control" id="name" name="name" value="<%= row.name %>">
+            </div>
+            <div class="form-group">
+              <label for="email">email</label>
+              <input type="text" class="form-control" id="email" name="email" value="<%= row.email %>">
+            </div>
+            <div class="form-group">
+              <label for="mobile">mobile</label>
+              <input type="text" class="form-control" id="mobile" name="mobile" value="<%= row.mobile %>">
+            </div>
+            <!-- <div class="form-group">
+              <input type="file" id="picture" name="picture"><br><br>
+              <img style="width: 100%;" id="myImg" name="myImg" src="" alt="">
+            </div>
+            <div class="form-group" style="display: none;">
+              <label for="image">image</label>
+              <input type="text" class="form-control" id="image" name="image">
+            </div> -->
+            <div class="form-group">
+              <label for="remark">備註</label>
+              <textarea class="form-control" id="remark" name="remark" cols="50" rows="3"><%= row.remark %></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="submit_bt">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../parts/script') %>
+
+<script>
+  const row = '<%- JSON.stringify(row) %>';
+  // console.log(row);
+  function checkForm() {
+    const barAlert = $('#alert');
+    barAlert.hide();
+    $.post('/question/edit/<%= row.sid %>', $(document.form1).serialize(), (output) => {
+      if (output.success) {
+        barAlert.removeClass('alert-danger').addClass('alert-success').text(output.info)
+      } else {
+        barAlert.removeClass('alert-success').addClass('alert-danger').text(output.info)
+      }
+      barAlert.slideDown();
+    }, 'json');
+
+    setTimeout(function () {
+      history.back();
+    }, 3000);
+    return false;
+  }
+
+</script>
+
+<%- include('../parts/html_foot') %>

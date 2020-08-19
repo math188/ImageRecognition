@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+</head>
+
+<body>
+    <div class="col-md-6">
+        <form name="form02">
+            <input type="file" name="picture" id="picture" style="display: none;"><br>
+        </form>
+    </div>
+    <button onclick="document.querySelector('#picture').click()">選取圖檔並上傳</button>
+    <br>
+    <img id="myimg" src="" alt="">
+
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+
+    <script>
+        const picture = document.getElementById('picture');
+        const myimg = document.getElementById('myimg');
+        picture.addEventListener('change', function () {
+            const fd = new FormData(document.form02);
+
+            fetch('/try-upload', {
+                method: 'POST',
+                body: fd
+            }).then(r => {
+                console.log(r);
+                return r.json();
+            }).then(obj => {
+                    console.log(obj);
+                    myimg.src = obj.img;
+                })
+
+        });
+
+
+
+    </script>
+</body>
+
+</html>
